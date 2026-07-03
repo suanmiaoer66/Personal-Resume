@@ -19,6 +19,11 @@ import project02 from "./assets/project-02.png";
 import project03 from "./assets/project-03.png";
 import project04 from "./assets/project-04.png";
 import project05 from "./assets/project-05.png";
+import appProject01 from "./assets/app-project-01.png";
+import appProject02 from "./assets/app-project-02.png";
+import appProject03 from "./assets/app-project-03.png";
+import appProject04 from "./assets/app-project-04.png";
+import appProject05 from "./assets/app-project-05.png";
 import fe1Picture from "./assets/fe1-picture.png";
 import fe2Picture from "./assets/fe2-picture.png";
 import pmPicture from "./assets/pm-picture.png";
@@ -113,6 +118,7 @@ const projects = [
     slug: "social-app",
     tone: "cyan",
     image: project01,
+    mobileImage: appProject01,
     detailFolder: "pengqiao-projects",
     detailCount: 6,
     gifIndexes: [4],
@@ -122,6 +128,7 @@ const projects = [
     slug: "multi-platform",
     tone: "lime",
     image: project02,
+    mobileImage: appProject02,
     detailFolder: "tx-projects",
     detailCount: 15,
     gifIndexes: [5, 6, 8, 11],
@@ -131,6 +138,7 @@ const projects = [
     slug: "voice-dubbing",
     tone: "rose",
     image: project03,
+    mobileImage: appProject03,
     detailFolder: "total-projects",
     detailCount: 47,
     gifIndexes: [1, 2, 8, 9, 11, 14, 22, 26, 27, 28, 29, 37, 39],
@@ -140,6 +148,7 @@ const projects = [
     slug: "admin-tools",
     tone: "violet",
     image: project04,
+    mobileImage: appProject04,
     detailFolder: "taqu-projects",
     detailCount: 19,
     gifIndexes: [],
@@ -149,6 +158,7 @@ const projects = [
     slug: "design-delivery",
     tone: "amber",
     image: project05,
+    mobileImage: appProject05,
     detailFolder: "zap-projects",
     detailCount: 7,
     gifIndexes: [],
@@ -623,7 +633,10 @@ export function App() {
               key={project.title}
               aria-label={`打开项目：${project.title}`}
             >
-              <img src={project.image} alt={project.title} loading="lazy" />
+              <picture>
+                <source media="(max-width: 760px)" srcSet={project.mobileImage} />
+                <img src={project.image} alt={project.title} loading="lazy" />
+              </picture>
             </a>
           ))}
         </div>
