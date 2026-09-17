@@ -197,7 +197,7 @@ const peerReviews = [
       "他的视觉判断和组件意识很强，既能关注界面的情绪表达，也会考虑后续复用和交付规范。一起做版本迭代时，细节走查非常靠谱。",
   },
   {
-    name: "郭梦飞",
+    name: "李飞",
     role: "前端开发",
     tone: "fe",
     avatar: fe1Picture,
