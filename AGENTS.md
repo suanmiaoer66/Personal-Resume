@@ -15,3 +15,4 @@ When implementing from a selected generated mock, treat that image as the source
 - Light mode refinements: the “预约沟通” button needs a subtle light border. Peer-review role badges must share the dark theme's original blue, green, and purple gradients with white text. Keep the timeline marker's breathing/pulse animation in light mode using gray rather than blue, and respect reduced-motion preferences.
 - Typography refinements: emphasize the hero's experience, education, and city values with bold text. The two introduction paragraphs use pure white (#ffffff) in dark mode; keep their readable dark text in light mode.
 - Work experience body text uses pure white (#ffffff) in dark mode and pure black (#000000) in light mode.
+- On desktop, align the introduction's four overview cards with the top of its title area to avoid empty space above the cards. Keep the mobile layout stacked after the introduction text.
