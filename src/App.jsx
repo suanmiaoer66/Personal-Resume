@@ -11,9 +11,9 @@ import {
   PanelsTopLeft,
   Sparkles,
   Star,
+  Moon,
+  Sun,
 } from "lucide-react";
-import heroCard03 from "./assets/hero-card-03.png";
-import heroCard04 from "./assets/hero-card-04.png";
 import project01 from "./assets/project-01.png";
 import project02 from "./assets/project-02.png";
 import project03 from "./assets/project-03.png";
@@ -41,21 +41,13 @@ const RESUME_PDF_URL =
 const DEFAULT_PROJECT_IMAGE_EXTENSION = "webp";
 const DEFAULT_PROJECT_IMAGE_PREFIX = "page";
 const DEFAULT_PROJECT_IMAGE_NUMBER_LENGTH = 2;
-const TYPEWRITER_TEXTS = ["吴文豪", "欢迎来到我的个人网站🥰"];
-const TYPEWRITER_CONFIG = {
-  typeSpeed: 100,
-  deleteSpeed: 50,
-  stayTime: 2000,
-  startDelay: 500,
-};
-
 const profile = {
   name: "吴文豪",
   title: "UI 设计师",
   tagline: "把复杂产品体验，整理成清晰、有温度、可落地的界面系统。",
   location: "深圳 / 郑州 / 杭州",
   salary: "全栈设计师",
-  years: "6 年经验",
+  years: "6 年",
   education: "本科",
   phone: "18565879526",
   wechat: "designW66",
@@ -166,7 +158,7 @@ const projects = [
 ];
 
 const introParagraphs = [
-  "目前是一名UI设计师，渴望成为一名全栈设计师。具备4年以上UI设计工作经验 ，承担多平台项目 ，设计创新并融合现有规 范对多方案产出能力且具有方法论对支撑，紧跟设计趋势，具沉淀能力。 我对技术的无限可能性充满热情，也专注于探索产品设计价值观，寻求极致设计、交互、科技之间的平衡包容性和业务理解来解决问题。",
+  "具备 6 年 UI 设计经验，参与社交、语音互动及多端产品设计。关注业务需求与用户体验，能够结合既有规范完成设计方案，并在版本迭代中持续维护界面的一致性。",
   "擅长从业务目标出发，完成信息架构、交互逻辑、体系、动效表达、后台配置与数据复盘，在体验质量与转化结果之间找到更稳定的设计解法。"
 ];
 
@@ -232,21 +224,6 @@ function handleSpotlightMove(event) {
   });
 }
 
-function handleHeroCardTilt(event) {
-  const card = event.currentTarget;
-  const rect = card.getBoundingClientRect();
-  const x = (event.clientX - rect.left) / rect.width - 0.5;
-  const y = (event.clientY - rect.top) / rect.height - 0.5;
-
-  card.style.setProperty("--tilt-x", `${(x * 24).toFixed(2)}deg`);
-  card.style.setProperty("--tilt-y", `${(-y * 24).toFixed(2)}deg`);
-}
-
-function resetHeroCardTilt(event) {
-  event.currentTarget.style.setProperty("--tilt-x", "0deg");
-  event.currentTarget.style.setProperty("--tilt-y", "0deg");
-}
-
 function useScrollReveal() {
   useEffect(() => {
     const sections = document.querySelectorAll(".reveal-section");
@@ -289,59 +266,6 @@ function useCurrentHash() {
   }, []);
 
   return hash;
-}
-
-function useTypewriter(texts, config) {
-  const [displayText, setDisplayText] = useState("");
-  const [isDeletingText, setIsDeletingText] = useState(false);
-
-  useEffect(() => {
-    let timeout;
-    let currentTextIndex = 0;
-    let currentCharIndex = 0;
-    let isDeleting = false;
-
-    const runTypewriter = () => {
-      const currentText = texts[currentTextIndex] ?? "";
-      const currentChars = Array.from(currentText);
-
-      if (!isDeleting) {
-        currentCharIndex += 1;
-        setDisplayText(currentChars.slice(0, currentCharIndex).join(""));
-        setIsDeletingText(false);
-
-        if (currentCharIndex === currentChars.length) {
-          timeout = window.setTimeout(() => {
-            isDeleting = true;
-            runTypewriter();
-          }, config.stayTime);
-          return;
-        }
-      } else {
-        currentCharIndex -= 1;
-        setDisplayText(currentChars.slice(0, currentCharIndex).join(""));
-        setIsDeletingText(true);
-
-        if (currentCharIndex === 0) {
-          isDeleting = false;
-          currentTextIndex = (currentTextIndex + 1) % texts.length;
-        }
-      }
-
-      timeout = window.setTimeout(
-        runTypewriter,
-        isDeleting ? config.deleteSpeed : config.typeSpeed,
-      );
-    };
-
-    timeout = window.setTimeout(runTypewriter, config.startDelay);
-
-    return () => {
-      window.clearTimeout(timeout);
-    };
-  }, [config.deleteSpeed, config.startDelay, config.stayTime, config.typeSpeed, texts]);
-
-  return { displayText, isDeleting: isDeletingText };
 }
 
 function useHashScroll(hash, enabled) {
@@ -458,13 +382,19 @@ export function App() {
   const currentHash = useCurrentHash();
   const activeProjectSlug = currentHash.replace("#project/", "");
   const activeProject = projects.find((project) => project.slug === activeProjectSlug);
-  const typewriter = useTypewriter(TYPEWRITER_TEXTS, TYPEWRITER_CONFIG);
   const [activeReviewIndex, setActiveReviewIndex] = useState(0);
-  const [isHeaderElevated, setIsHeaderElevated] = useState(false);
+  const [isLightTheme, setIsLightTheme] = useState(
+    () => window.localStorage.getItem("resume-theme") === "light",
+  );
   const activeReview = peerReviews[activeReviewIndex];
 
   useScrollReveal();
   useHashScroll(currentHash, !activeProject);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = isLightTheme ? "light" : "dark";
+    window.localStorage.setItem("resume-theme", isLightTheme ? "light" : "dark");
+  }, [isLightTheme]);
 
   useEffect(() => {
     if (activeProject) {
@@ -480,33 +410,14 @@ export function App() {
     };
   }, [activeProject]);
 
-  useEffect(() => {
-    if (activeProject) {
-      return undefined;
-    }
-
-    const updateHeaderState = () => {
-      setIsHeaderElevated(window.scrollY > 12);
-    };
-
-    updateHeaderState();
-    window.addEventListener("scroll", updateHeaderState, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", updateHeaderState);
-    };
-  }, [activeProject]);
-
   if (activeProject) {
     return <ProjectDetailPage project={activeProject} />;
   }
 
   return (
     <main className="resume-shell">
-      <div className="ambient ambient-one" />
-      <div className="ambient ambient-two" />
       <header
-        className={`site-header ${isHeaderElevated ? "is-elevated" : ""}`}
+        className="site-header"
         aria-label="页面导航"
       >
         <a className="brand" href="#overview" aria-label="回到首页">
@@ -522,41 +433,54 @@ export function App() {
             </a>
           ))}
         </nav>
-        <div className="wechat-popover-wrap header-contact-wrap">
+        <div className="header-actions">
           <button
-            className="contact-link"
+            className="theme-toggle"
             type="button"
-            aria-describedby="header-wechat-popover"
+            aria-label={isLightTheme ? "切换深色模式" : "切换浅色模式"}
+            aria-pressed={isLightTheme}
+            title={isLightTheme ? "切换深色模式" : "切换浅色模式"}
+            onClick={() => setIsLightTheme((currentTheme) => !currentTheme)}
           >
-            <Mail size={16} />
-            联系
+            {isLightTheme ? <Moon size={16} /> : <Sun size={16} />}
+            <span>{isLightTheme ? "深色" : "浅色"}</span>
           </button>
-          <div className="wechat-popover" id="header-wechat-popover" role="tooltip">
-            <img src={wechatQr} alt="微信二维码" loading="lazy" />
-            <p>扫一扫，添加我为朋友</p>
+          <div className="wechat-popover-wrap header-contact-wrap">
+            <button
+              className="contact-link"
+              type="button"
+              aria-describedby="header-wechat-popover"
+            >
+              <Mail size={16} />
+              联系
+            </button>
+            <div className="wechat-popover" id="header-wechat-popover" role="tooltip">
+              <img src={wechatQr} alt="微信二维码" loading="lazy" />
+              <p>扫一扫，添加我为朋友</p>
+            </div>
           </div>
         </div>
       </header>
 
-      <section className="hero reveal-section is-visible" id="overview">
+      <section className="hero" id="overview" aria-labelledby="hero-title">
         <div className="hero-copy">
-          <p className="hero-kicker">
-            <Sparkles size={16} />
-            Full-STACK DESIGNER
-          </p>
-          <h1 className="hero-typewriter-line">
-            <span>{typewriter.displayText}</span>
-            <span
-              className={`typewriter-cursor ${typewriter.isDeleting ? "cursor-hidden" : ""
-                }`}
-              aria-hidden="true"
-            />
+          <h1 id="hero-title" className="hero-title">
+            {profile.name}
+            <span>{profile.title}</span>
           </h1>
-          <p className="hero-tagline">{profile.tagline}</p>
+          <dl className="hero-facts" aria-label="个人基本信息">
+            <div><dt>经验</dt><dd><strong>{profile.years}</strong></dd></div>
+            <div><dt>学历</dt><dd><strong>{profile.education}</strong></dd></div>
+            <div><dt>城市</dt><dd><strong>{profile.location}</strong></dd></div>
+          </dl>
+          <p className="hero-description">
+            专注 App、Web 与小程序的界面及体验设计，
+            从需求梳理、设计规范到开发走查与上线验收。
+          </p>
           <div className="hero-actions">
             <a className="primary-button" href="#projects">
               查看项目
-              <ArrowUpRight size={18} />
+              <ArrowUpRight size={18} aria-hidden="true" />
             </a>
             <a
               className="ghost-button"
@@ -565,28 +489,28 @@ export function App() {
               target="_blank"
               rel="noreferrer"
             >
-              <Download size={18} />
+              <Download size={18} aria-hidden="true" />
               下载简历
             </a>
           </div>
         </div>
-
-        <div className="hero-float-layer" aria-hidden="true">
-          <div
-            className="hero-info-card hero-info-card-3"
-            onPointerLeave={resetHeroCardTilt}
-            onPointerMove={handleHeroCardTilt}
-          >
-            <img src={heroCard04} alt="" draggable="false" />
-          </div>
-          <div
-            className="hero-info-card hero-info-card-4"
-            onPointerLeave={resetHeroCardTilt}
-            onPointerMove={handleHeroCardTilt}
-          >
-            <img src={heroCard03} alt="" draggable="false" />
-          </div>
-        </div>
+        <aside className="hero-focus" aria-labelledby="hero-focus-title">
+          <h2 id="hero-focus-title">工作侧重</h2>
+          <dl>
+            <div>
+              <dt>产品界面</dt>
+              <dd>社交 App、语音互动、多端产品</dd>
+            </div>
+            <div>
+              <dt>体验与规范</dt>
+              <dd>交互流程、组件规范、视觉一致性</dd>
+            </div>
+            <div>
+              <dt>交付与落地</dt>
+              <dd>设计标注、开发协作、上线验收</dd>
+            </div>
+          </dl>
+        </aside>
       </section>
 
       <section className="about-section reveal-section" id="about">
